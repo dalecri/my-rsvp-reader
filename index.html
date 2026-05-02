@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -407,7 +406,7 @@
               </main>
 
               {/* Bottom Floating Control Pill */}
-              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[95%] max-w-3xl flex flex-col items-center gap-3 z-40">
+              <div className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 w-[95%] max-w-3xl flex flex-col items-center gap-3 z-40">
                 
                 {/* Shortcuts Legend */}
                 <div className="hidden md:flex gap-3 text-[10px] uppercase font-mono tracking-widest text-slate-400 dark:text-slate-500 font-semibold mb-1">
@@ -417,26 +416,46 @@
                   <span className="bg-white/50 dark:bg-[#1e1e1e]/50 px-2 py-1 rounded">[ ] <span className="text-slate-400/50 dark:text-slate-600">Chapters</span></span>
                 </div>
 
-                <div className="w-full bg-white/80 dark:bg-[#1e1e1e]/90 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800 shadow-2xl rounded-full p-3 md:p-4 flex items-center justify-between gap-4 md:gap-8" onClick={e => e.stopPropagation()}>
+                <div className="w-full bg-white/80 dark:bg-[#1e1e1e]/90 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800 shadow-2xl rounded-3xl md:rounded-full p-4 md:p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 md:gap-8" onClick={e => e.stopPropagation()}>
                   
-                  {/* Playback Controls */}
-                  <div className="flex items-center gap-1 md:gap-3 pl-2">
-                    <button onClick={() => stepWord('backward')} className="p-2 hover:bg-slate-100 dark:hover:bg-[#2a2a2a] rounded-full transition-colors text-slate-600 dark:text-slate-400">
-                      <SkipBack size={20} />
-                    </button>
-                    <button
-                      onClick={() => setIsPlaying(!isPlaying)}
-                      className="w-12 h-12 flex items-center justify-center bg-[#1c1917] dark:bg-white text-white dark:text-[#1c1917] rounded-full shadow-md hover:scale-105 active:scale-95 transition-all"
-                    >
-                      {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-0.5" />}
-                    </button>
-                    <button onClick={() => stepWord('forward')} className="p-2 hover:bg-slate-100 dark:hover:bg-[#2a2a2a] rounded-full transition-colors text-slate-600 dark:text-slate-400">
-                      <SkipForward size={20} />
-                    </button>
+                  {/* Top Row on Mobile: Playback & WPM */}
+                  <div className="flex items-center justify-between w-full md:w-auto gap-4">
+                    {/* Playback Controls */}
+                    <div className="flex items-center gap-1 md:gap-3">
+                      <button onClick={() => stepWord('backward')} className="p-2 hover:bg-slate-100 dark:hover:bg-[#2a2a2a] rounded-full transition-colors text-slate-600 dark:text-slate-400">
+                        <SkipBack size={20} />
+                      </button>
+                      <button
+                        onClick={() => setIsPlaying(!isPlaying)}
+                        className="w-12 h-12 flex items-center justify-center bg-[#1c1917] dark:bg-white text-white dark:text-[#1c1917] rounded-full shadow-md hover:scale-105 active:scale-95 transition-all"
+                      >
+                        {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-0.5" />}
+                      </button>
+                      <button onClick={() => stepWord('forward')} className="p-2 hover:bg-slate-100 dark:hover:bg-[#2a2a2a] rounded-full transition-colors text-slate-600 dark:text-slate-400">
+                        <SkipForward size={20} />
+                      </button>
+                    </div>
+
+                    {/* Right Divider & WPM */}
+                    <div className="flex items-center gap-4 md:gap-6 pr-2 md:pr-4 md:border-l border-slate-200 dark:border-slate-700 md:pl-6">
+                       <input 
+                          type="range" 
+                          min="100" 
+                          max="1000" 
+                          step="50"
+                          value={wpm}
+                          onChange={(e) => setWpm(Number(e.target.value))}
+                          className="w-20 md:w-24 accent-[#c84b31] dark:accent-[#e45b3e] h-1 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
+                        />
+                        <div className="flex flex-col items-end w-8 md:w-10 text-[#1c1917] dark:text-[#e5e5e5]">
+                          <span className="text-sm font-bold leading-none">{wpm}</span>
+                          <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-1 uppercase">WPM</span>
+                        </div>
+                    </div>
                   </div>
 
-                  {/* Scrubber & Progress */}
-                  <div className="flex-1 flex items-center gap-4">
+                  {/* Scrubber & Progress (Bottom row on mobile) */}
+                  <div className="flex-1 flex items-center gap-3 md:gap-4 md:border-none border-t border-slate-200/50 dark:border-slate-700/50 pt-3 md:pt-0">
                     <span className="text-xs font-bold text-slate-400 dark:text-slate-500 w-8">{((wordIndex / (Math.max(activeBook.words.length - 1, 1))) * 100).toFixed(0)}%</span>
                     
                     <div className="flex-1 relative flex items-center h-8">
@@ -462,26 +481,9 @@
                       />
                     </div>
 
-                    <span className="text-[10px] font-mono font-medium text-slate-400 dark:text-slate-500 w-24 text-right uppercase tracking-wider">
-                      ~{Math.ceil((activeBook.words.length - wordIndex) / wpm)} MIN LEFT
+                    <span className="text-[10px] font-mono font-medium text-slate-400 dark:text-slate-500 w-16 md:w-24 text-right uppercase tracking-wider">
+                      ~{Math.ceil((activeBook.words.length - wordIndex) / wpm)} M LEFT
                     </span>
-                  </div>
-
-                  {/* Right Divider & WPM */}
-                  <div className="hidden md:flex items-center gap-6 pr-4 border-l border-slate-200 dark:border-slate-700 pl-6">
-                     <input 
-                        type="range" 
-                        min="100" 
-                        max="1000" 
-                        step="50"
-                        value={wpm}
-                        onChange={(e) => setWpm(Number(e.target.value))}
-                        className="w-24 accent-[#c84b31] dark:accent-[#e45b3e] h-1 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
-                      />
-                      <div className="flex flex-col items-end w-10 text-[#1c1917] dark:text-[#e5e5e5]">
-                        <span className="text-sm font-bold leading-none">{wpm}</span>
-                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-1 uppercase">WPM</span>
-                      </div>
                   </div>
                 </div>
               </div>
